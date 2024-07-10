@@ -1,8 +1,8 @@
 ﻿using VersioningSystem.Model;
 
-VM vm = new VM("10.5");
+VM vm = new VM("10.5.4");
 
-Console.WriteLine(vm.Major().Major().Major().Minor().Release());
+Console.WriteLine(vm.Minor().Patch().Patch().Patch().Release());
 
 Console.WriteLine(vm.Rollback().Release());
 

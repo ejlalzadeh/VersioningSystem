@@ -6,11 +6,9 @@
         public int Minor { get; private set; }
         public int Patch { get; private set; }
 
-
         public Version(int major, int minor, int patch)
         {
-            if (major < 0 || minor < 0 || patch < 0)
-                throw new Exception("Invalid version number");
+            Validate(major, minor, patch);
 
             Major = major; Minor = minor; Patch = patch;
         }
@@ -28,15 +26,25 @@
                 if (!parts.Any() || parts.Any(part => !int.TryParse(part, out int _)))
                     throw new ArgumentException("Error occurred while parsing version!");
 
-                Major = int.Parse(parts[0]);
-                Minor = parts.Count > 1 ? int.Parse(parts[1]) : 0;
-                Patch = parts.Count > 2 ? int.Parse(parts[2]) : 0;
+                int major = int.Parse(parts[0]);
+                int minor = parts.Count > 1 ? int.Parse(parts[1]) : 0;
+                int patch = parts.Count > 2 ? int.Parse(parts[2]) : 0;
+
+                Validate(major, minor, patch);
+
+                Major = major; Minor = minor; Patch = patch;
             }
         }
 
         public override string ToString()
         {
             return $"{Major}.{Minor}.{Patch}";
+        }
+
+        private void Validate(int major, int minor, int patch)
+        {
+            if (major < 0 || minor < 0 || patch < 0 || (major == 0 && minor == 0 && patch == 0))
+                throw new Exception("Invalid version number");
         }
     }
 }
