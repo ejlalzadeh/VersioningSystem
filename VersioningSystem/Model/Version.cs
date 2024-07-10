@@ -2,22 +2,22 @@
 {
     internal class Version
     {
-        public int Major { get; private set; }
-        public int Minor { get; private set; }
-        public int Patch { get; private set; }
+        private uint _major;
+        private uint _minor;
+        private uint _patch;
 
-        public Version(int major, int minor, int patch)
+        public Version(uint major, uint minor, uint patch)
         {
             Validate(major, minor, patch);
 
-            Major = major; Minor = minor; Patch = patch;
+            _major = major; _minor = minor; _patch = patch;
         }
 
         public Version(string versionAsString)
         {
             if (string.IsNullOrWhiteSpace(versionAsString))
             {
-                Major = 0; Minor = 0; Patch = 1;
+                _major = 0; _minor = 0; _patch = 1;
             }
             else
             {
@@ -26,24 +26,39 @@
                 if (!parts.Any() || parts.Any(part => !int.TryParse(part, out int _)))
                     throw new ArgumentException("Error occurred while parsing version!");
 
-                int major = int.Parse(parts[0]);
-                int minor = parts.Count > 1 ? int.Parse(parts[1]) : 0;
-                int patch = parts.Count > 2 ? int.Parse(parts[2]) : 0;
+                uint major = uint.Parse(parts[0]);
+                uint minor = parts.Count > 1 ? uint.Parse(parts[1]) : 0;
+                uint patch = parts.Count > 2 ? uint.Parse(parts[2]) : 0;
 
                 Validate(major, minor, patch);
 
-                Major = major; Minor = minor; Patch = patch;
+                _major = major; _minor = minor; _patch = patch;
             }
+        }
+
+        public Version Major()
+        {
+            return new Version(_major + 1, 0, 0);
+        }
+
+        public Version Minor()
+        {
+            return new Version(_major, _minor + 1, 0);
+        }
+
+        public Version Patch()
+        {
+            return new Version(_major, _minor, _patch + 1);
         }
 
         public override string ToString()
         {
-            return $"{Major}.{Minor}.{Patch}";
+            return $"{_major}.{_minor}.{_patch}";
         }
 
-        private void Validate(int major, int minor, int patch)
+        private void Validate(uint major, uint minor, uint patch)
         {
-            if (major < 0 || minor < 0 || patch < 0 || (major == 0 && minor == 0 && patch == 0))
+            if (major == 0 && minor == 0 && patch == 0)
                 throw new Exception("Invalid version number");
         }
     }
